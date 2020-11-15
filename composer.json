@@ -10,7 +10,9 @@
     }
   ],
   "require": {
-    "ext-json": "*"
+    "ext-json": "*",
+    "php-amqplib/php-amqplib": "^2.12",
+    "vlucas/phpdotenv": "^5.2"
   },
   "autoload": {
     "psr-4": {

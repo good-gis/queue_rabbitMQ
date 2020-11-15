@@ -31,6 +31,21 @@ abstract class ApiController
         $this->formData = $this->getFormData($this->method);
     }
 
+    /**
+     * @param $method
+     * @return array
+     * @throws JsonException
+     */
+    protected function getFormData($method): array
+    {
+        if ($method === 'GET') {
+            return $_GET;
+        }
+
+        $inputJSON = file_get_contents('php://input');
+        return json_decode($inputJSON, true, 512, JSON_THROW_ON_ERROR);
+    }
+
     public function run()
     {
         //Первые 2 элемента массива URI должны быть "api" и название таблицы
@@ -66,26 +81,11 @@ abstract class ApiController
         }
     }
 
-    /**
-     * @param $method
-     * @return array
-     * @throws JsonException
-     */
-    protected function getFormData($method): array
-    {
-        if ($method === 'GET') {
-            return $_GET;
-        }
+    abstract protected function indexAction(): void;
 
-        $inputJSON = file_get_contents('php://input');
-        return json_decode($inputJSON, TRUE, 512, JSON_THROW_ON_ERROR);
-    }
+    abstract protected function createAction(): void;
 
-    abstract protected function indexAction();
+    abstract protected function updateAction(): void;
 
-    abstract protected function createAction();
-
-    abstract protected function updateAction();
-
-    abstract protected function deleteAction();
+    abstract protected function deleteAction(): void;
 }

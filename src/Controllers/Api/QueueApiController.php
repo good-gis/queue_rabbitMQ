@@ -2,7 +2,11 @@
 
 namespace App\Controllers\Api;
 
+use App\Services\RabbitMQ;
 use App\Views\ApiJsonView;
+use Exception;
+use JsonException;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class QueueApiController extends ApiController
 {
@@ -17,22 +21,43 @@ class QueueApiController extends ApiController
         $this->ApiJsonView = new ApiJsonView();
     }
 
-    protected function indexAction()
+    /**
+     * @throws JsonException
+     */
+    protected function indexAction(): void
     {
         $this->ApiJsonView->response($this->wrongResponse, 405);
     }
 
-    protected function createAction()
+    /**
+     * @throws JsonException
+     * @throws Exception
+     */
+    protected function createAction(): void
+    {
+        $channel = RabbitMQ::getAMQPChannel();
+        $channel->queue_declare('post_body_queue', false, false, false, false);
+
+        $msg = new AMQPMessage(implode('', $this->formData));
+        $channel->basic_publish($msg, '', 'post_body_queue');
+
+        RabbitMQ::closeChannelAndConnection();
+
+        $this->ApiJsonView->response('Body send to RabbitMQ', 200);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    protected function updateAction(): void
     {
         $this->ApiJsonView->response($this->wrongResponse, 405);
     }
 
-    protected function updateAction()
-    {
-        //кидать в очередь body
-    }
-
-    protected function deleteAction()
+    /**
+     * @throws JsonException
+     */
+    protected function deleteAction(): void
     {
         $this->ApiJsonView->response($this->wrongResponse, 405);
     }
