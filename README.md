@@ -18,7 +18,7 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-manag
 
 3. Подтянуть зависимости c помошью composer
 ```bash
-composer install - в папке проекта
+composer install
 ```
 
 4. Указать для nginx в файле конфигурации домер, root папку и перенаправление запросов на точку входа index.php, например так
