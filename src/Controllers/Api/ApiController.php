@@ -3,16 +3,15 @@
 namespace App\Controllers\Api;
 
 use Exception;
-use JsonException;
 use RuntimeException;
 
 abstract class ApiController
 {
     public string $apiName = '';
+    public string $formData = ''; //Хранит данные из body
 
     public array $requestUri = [];
     public array $requestParams = [];
-    public array $formData = []; //Хранит данные из body
 
     protected string $method = ''; //GET|POST|PUT|DELETE
     protected string $action = ''; //Название метода для выполнения
@@ -33,17 +32,15 @@ abstract class ApiController
 
     /**
      * @param $method
-     * @return array
-     * @throws JsonException
+     * @return array|false|string
      */
-    protected function getFormData($method): array
+    protected function getFormData($method)
     {
         if ($method === 'GET') {
-            return $_GET;
+            return implode('', $_GET);
         }
 
-        $inputJSON = file_get_contents('php://input');
-        return json_decode($inputJSON, true, 512, JSON_THROW_ON_ERROR);
+        return file_get_contents('php://input');
     }
 
     public function run()
@@ -68,8 +65,6 @@ abstract class ApiController
     {
         $method = $this->method;
         switch ($method) {
-            case 'GET':
-                return 'indexAction';
             case 'POST':
                 return 'createAction';
             case 'PUT':
@@ -77,7 +72,7 @@ abstract class ApiController
             case 'DELETE':
                 return 'deleteAction';
             default:
-                return '';
+                return 'indexAction';
         }
     }
 

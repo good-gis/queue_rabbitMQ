@@ -38,7 +38,7 @@ class QueueApiController extends ApiController
         $channel = RabbitMQ::getAMQPChannel();
         $channel->queue_declare('post_body_queue', false, false, false, false);
 
-        $msg = new AMQPMessage(implode('', $this->formData));
+        $msg = new AMQPMessage($this->formData);
         $channel->basic_publish($msg, '', 'post_body_queue');
 
         RabbitMQ::closeChannelAndConnection();

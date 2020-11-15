@@ -52,12 +52,6 @@ final class RabbitMQ
         static::$connection = null;
     }
 
-    public static function closeChannel(): void
-    {
-        static::$channel->close();
-        static::$channel = null;
-    }
-
     private function __clone()
     {
     }
